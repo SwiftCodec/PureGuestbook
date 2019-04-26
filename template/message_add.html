@@ -1,0 +1,65 @@
+<div class="py-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 justify-content-center d-flex"><i class="fa fa-refresh fa-spin fa-fw fa-4x"></i></div>
+        </div>
+    </div>
+</div>
+<div class="py-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="alert alert-primary shadow" role="alert">
+                    <button type="button" class="close" data-dismiss="alert">×</button>
+                    <h4 class="alert-heading">Успех!</h4>
+                    <p class="mb-0">Ваше сообщение опубликованно</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 order-md-1">
+                <h4 class="mb-3 text-dark"><b>Добавить сообщение</b></h4>
+                <form id="#form1" role="form" class="needs-validation" data-toggle="validator">
+                    <div class="mb-3"> <label for="username">Имя пользователя</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend"> <span class="input-group-text">@</span> </div>
+                            <input type="text" pattern="^[A-z0-9]{1,}$" maxlength="32" data-minlength="8" class="form-control" id="username" placeholder="username123" data-error="Bruh, that email address is invalid" required>
+                            <div class="invalid-feedback" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3"> <label for="email">Email </label>
+                        <input type="email" class="form-control" id="email" placeholder="you@yandex.ru" data-error="Bruh, that email address is invalid" required>
+                        <div class="invalid-feedback help-block with-errors"></div>
+                    </div>
+                    <div class="mb-3"> <label for="homepage" class="pr-1">Домашнаяя страница<br></label><span class="text-muted">(Необязательно)</span>
+                        <input type="text" class="form-control" id="homepage" placeholder="https://">
+                    </div>
+                    <div class="mb-3"> <label for="message">Сообщение<br></label>
+                        <textarea class="form-control" id="message" rows="3" maxlength="2048" data-minlength="10" placeholder="Введите ваше сообщение..." required></textarea>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-3"> <label for="tags" class="pr-1">Тэги<br></label><span class="text-muted">(Через запятую, необязательно)</span>
+                            <input type="text" class="form-control" id="tags" placeholder="тег1, тег2, тег3">
+                        </div>
+                    </div>
+                    <hr class="mb-4">
+                    <hr class="mb-4">
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="save-info" value="on" required> <label class="custom-control-label" for="save-info">Я согласен со всеми правилами</label>
+                        <div class="invalid-feedback"> Вам необходимо принять правила пользования. </div>
+                    </div>
+                    <hr class="mb-4">
+                    <div class="row">
+                        <div class="col-md-6"><button class="btn btn-primary btn-lg btn-block" type="reset" >Очистить</button></div>
+                        <div class="col-md-6"><button class="btn btn-secondary btn-lg btn-block" type="submit">Отправить</button></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

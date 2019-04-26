@@ -1,0 +1,53 @@
+{% if messages %}
+{% for message in messages %}
+<div class="py-2" style="">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-start shadow-sm">#: {{ message.row_num }} </div>
+                    {% if message.create_date %}
+                    <div class="card-header d-flex justify-content-end shadow-sm">Добавлено: {{ message.create_date }} </div>
+                    {% endif %}
+                    <div class="card-body shadow-sm">
+                        {% if message.username %}
+                        <h5 class=""><i class="fa fa-user fa-fw"></i> {{ message.username }} </h5>
+                        {% endif %}
+                        <blockquote class="blockquote mb-0">
+                            <p> {{ message.text }} </p>
+                        </blockquote>
+                        {% if message.homepage %}
+                        <h6 class="card-subtitle my-2 text-muted d-flex justify-content-end"><i class="fa fa-fw fa-home"></i>{{ message.homepage }}</h6>
+                        {% endif %}
+                        {% if message.email %}
+                        <h6 class="card-subtitle my-2 text-muted d-flex justify-content-end"><i class="fa fa-fw fa-envelope"></i>{{ message.email }}</h6>
+                        {% endif %}
+
+                        {% if message.tags %}
+                        <a href="/index.php?action=search&q={{ message.tags }}" class="card-link" target="_blank">{{ message.tags }}</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% else %}
+<div class="py-4" >
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card text-center">
+                    <div class="card-header"> <h5 class="card-title">Нет данных </h5></div>
+                    <div class="card-body">
+                        <p class="card-text">Не удалось получить данные, возможно их просто нет. Попробуйте создать их ещё раз.</p>
+                        <br />
+                        <a href="/index.php?action=install" class="btn btn-primary">Перейти на страницу установки</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
