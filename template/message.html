@@ -8,7 +8,7 @@
 
                     <div class="card-header shadow-sm">
                         <div class="row">
-                            <div class="col-md-6">#: {{ message.row_num }} </div>
+                            <div class="col-md-6">#{{ message.row_num }} </div>
                             {% if message.create_date %}
                             <div class="col-md-6 d-flex justify-content-end">Добавлено: {{ message.create_date }} </div>
                             {% endif %}
@@ -26,7 +26,7 @@
                         <h6 class="card-subtitle my-2 text-muted d-flex justify-content-end"><i class="fa fa-fw fa-home"></i>{{ message.homepage }}</h6>
                         {% endif %}
                         {% if message.email %}
-                        <h6 class="card-subtitle my-2 text-muted d-flex justify-content-end"><i class="fa fa-fw fa-envelope"></i>{{ message.email }}</h6>
+                        <h6 class="card-subtitle my-2 text-muted d-flex justify-content-end"><i class="fa fa-fw fa-envelope"></i><a href="mailto:{{ message.email }}">{{ message.email }}</a></h6>
                         {% endif %}
 
                         {% if message.tags %}

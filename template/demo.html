@@ -1,0 +1,19 @@
+<div class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card text-center" >
+                    <div class="card-header"> Демо-режим </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Создайте записи для просмотра гостевой книги в демо режиме</h5>
+                        <div class="progress-bar progress-bar-striped my-3" role="progressbar" style="width: 50%;">50%</div>
+                        <a href="#" class="btn btn-primary m-2">Создать записи</a>
+                    </div>
+                    {% if status %}
+                    <div class="card-footer text-muted"> {{ status }} </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

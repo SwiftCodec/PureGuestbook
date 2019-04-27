@@ -1,7 +1,7 @@
 <?php
 
 // how much test rows needed
-define("COUNT_TEST_ROWS", 100);
+define("COUNT_TEST_ROWS", 11);
 // maximum message length (minimum = MESSAGE_MAX_LENGTH / 6)
 define("MESSAGE_MAX_LENGTH", 1024);
 // maximum keywords (minimum = KEYWORDS_LIMIT / 2)
@@ -21,6 +21,15 @@ use Faker\Factory;
 // https://github.com/auraphp/Aura.SqlQuery
 use Aura\SqlQuery\QueryFactory;
 
+// template engine
+$loader = new \Twig\Loader\FilesystemLoader(__DIR__ . '/template');
+$twig = new \Twig\Environment($loader);
+
+// cache in debug mode! Stopped.
+$twig = new \Twig\Environment($loader, [
+    'cache' => __DIR__ .'/cache', 'debug'=>true,
+]);
+
 createTables();
 
 // create a Faker instance
@@ -31,70 +40,69 @@ $pdo = new PDOconn();
 // init query factory
 $queryFactory = new QueryFactory('Mysql');
 
-$header = "<html><meta charset=\"utf-8\">" . PHP_EOL;
-$footer = "</html>";
-
 // prepare insert transaction
 $insert = $queryFactory->newInsert();
 $htmlTestRows = "";
+$goodRows = 0;
+$badRows = 0;
+$time_start = microtime(true);
 
 for ($i = 0; $i < COUNT_TEST_ROWS; $i++) {
-    // random name
-    $username = $faker->word . $faker->word . $faker->numberBetween($min = 1954, $max = 2001);
-    // random address
-    $address = $faker->freeEmail;
-    // random Homepage
-    $homepage = $faker->optional($weight = 0.4)->domainName;
-    // random text
-    $message = $faker->realText($maxNbChars = rand(round(MESSAGE_MAX_LENGTH / 6), MESSAGE_MAX_LENGTH));
-    // random tags, with utf-8
-    $wordsPattern = "~[^\p{L}\\'\-\\xC2\\xAD]+~u";
-    $words = preg_split($wordsPattern, $message, -1, PREG_SPLIT_NO_EMPTY);
-    $keywords = "";
-    $keywordsCnt = 0;
-    do {
-        $keyword = $words[rand(0, count($words)-1)];
-        if(mb_strlen($keyword, 'UTF-8') >= KEYWORD_MIN_LENGTH) {
-            $keywords .= $keyword . ", ";
-            $keywordsCnt++;
+    $arFaker = createFakeData($faker);
+    if($arFaker != null){
+        $arFaker['keywords'] = "";
+        $keywordsCnt = 0;
+        do {
+            $keyword = $arFaker['words'][rand(0, count($arFaker['words'])-1)];
+            if(mb_strlen($keyword, 'UTF-8') >= KEYWORD_MIN_LENGTH) {
+                $arFaker['keywords'] .= $keyword . ", ";
+                $keywordsCnt++;
+            }
+        } while ($keywordsCnt < rand(round(KEYWORDS_LIMIT / 2), KEYWORDS_LIMIT));
+        $arFaker['keywords'] = substr($arFaker['keywords'], 0, -2);
+        // random created date and time
+        $created = $faker->dateTimeThisYear($max = 'now', $timezone = null);//->format('d.m.Y - H:m:s');
+
+        $htmlTestRows .= "<p>" . PHP_EOL;
+        $htmlTestRows .= "<b>Username:</b> " . $arFaker['username'] . "<br/>" . PHP_EOL;
+        $htmlTestRows .= "<b>E-Mail:</b> " . $arFaker['address'] . "<br/>" . PHP_EOL;
+        $htmlTestRows .= "<b>Homepage:</b> " . $arFaker['homepage'] . "<br/>" . PHP_EOL;
+        $htmlTestRows .= "<b>Message:</b> " . $arFaker['message'] . "<br/>" . PHP_EOL;
+        $htmlTestRows .= "<b>Tags:</b> " . $arFaker['keywords'] . "<br/>" . PHP_EOL;
+        $htmlTestRows .= "<b>Created:</b> " . $created->format('d.m.Y - G:i:s') . "<br/>" . PHP_EOL;
+        $htmlTestRows .= "<p/>" . PHP_EOL;
+
+        // insert into this table
+        $insert->into('D_GUESTBOOK');
+        $insert
+            ->into('D_GUESTBOOK')      // INTO this table
+            ->cols([                        // bind values as "(col) VALUES (:col)"
+                'username' => $arFaker['username'],
+                'email' => $arFaker['address'],
+                'homepage' => $arFaker['homepage'],
+                'text' => $arFaker['message'],
+                'tags' => $arFaker['keywords'],
+                'create_date' => $created->format('Y-m-d G:i:s')
+            ]);
+        // set up Multiple rows ...
+        //$insert->addRow();
+        // prepare transaction and execute all rows
+        $sth = $pdo->prepare($insert->getStatement());
+        $sth->execute($insert->getBindValues());
+        $goodRows++;
+    } else {
+        $badRows++;
+        // 1000 errors its very bad... infinity loop? Nope. Break.
+        if($badRows >= 1000) {
+            break;
         }
-    } while ($keywordsCnt < rand(round(KEYWORDS_LIMIT / 2), KEYWORDS_LIMIT));
-    $keywords = substr($keywords, 0, -2);
-    // random created date and time
-    $created = $faker->dateTimeThisYear($max = 'now', $timezone = null);//->format('d.m.Y - H:m:s');
-
-    $htmlTestRows .= "<p>" . PHP_EOL;
-    $htmlTestRows .= "<b>Username:</b> " . $username . "<br/>" . PHP_EOL;
-    $htmlTestRows .= "<b>E-Mail:</b> " . $address . "<br/>" . PHP_EOL;
-    $htmlTestRows .= "<b>Homepage:</b> " . $homepage . "<br/>" . PHP_EOL;
-    $htmlTestRows .= "<b>Message:</b> " . $message . "<br/>" . PHP_EOL;
-    $htmlTestRows .= "<b>Tags:</b> " . $keywords . "<br/>" . PHP_EOL;
-    $htmlTestRows .= "<b>Created:</b> " . $created->format('d.m.Y - G:i:s') . "<br/>" . PHP_EOL;
-    $htmlTestRows .= "<p/>" . PHP_EOL;
-
-    // insert into this table
-    $insert->into('D_GUESTBOOK');
-    $insert
-        ->into('D_GUESTBOOK')      // INTO this table
-        ->cols([                        // bind values as "(col) VALUES (:col)"
-            'username' => $username,
-            'email' => $address,
-            'homepage' => $homepage,
-            'text' => $message,
-            'tags' => $keywords,
-            'create_date' => $created->format('Y-m-d G:i:s')
-        ]);
-    // set up Multiple rows ...
-    $insert->addRow();
-
+    }
 }
 
-// prepare transaction and execute all rows
-$sth = $pdo->prepare($insert->getStatement());
-$sth->execute($insert->getBindValues());
 
-$status = "Генерация тестовых данных завершена. Количество добавленных записей: " . $sth->rowCount();
+//$sth->rowCount()
 
+$status = "Генерация тестовых данных завершена за " . number_format((float)microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"], 2, '.', '') . " сек. Количество добавленных записей: " . $goodRows . ", ошибочных генераций: " . $badRows;
 
 /*$select = $queryFactory->newSelect();
 $select->cols([
@@ -111,10 +119,36 @@ var_dump($result);*/
 
 
 $body = $status . "<br/>" . $htmlTestRows;
-$response = $header . $body . $footer;
+$response = $body;
 
-echo $response;
+//echo $response;
 
+$template = $twig->load('main.html');
+echo $template->render([
+    'demo' => true,
+    'status' => $status
+]);
+//echo $twig->render('main.html', ['messages' => $messages]);
+
+
+function createFakeData($faker) {
+    $arFaker = null;
+    // random name
+    $arFaker['username'] = $faker->word . $faker->word . $faker->numberBetween($min = 1954, $max = 2001);
+    // random address
+    $arFaker['address'] = $faker->freeEmail;
+    // random Homepage
+    $arFaker['homepage'] = $faker->optional($weight = 0.4)->domainName;
+    // random text
+    $arFaker['message'] = $faker->realText($maxNbChars = rand(round(MESSAGE_MAX_LENGTH / 6), MESSAGE_MAX_LENGTH));
+    // random tags, with utf-8
+    $wordsPattern = "~[^\p{L}\\'\-\\xC2\\xAD]+~u";
+    $arFaker['words'] = preg_split($wordsPattern, $arFaker['message'], -1, PREG_SPLIT_NO_EMPTY);
+    if(is_null($arFaker['message']) || strlen($arFaker['message']) < 10 || is_null($arFaker['username']) || is_null($arFaker['address'])){
+        return null;
+    }
+    return $arFaker;
+}
 
 function createTables() {
     $pdo = new PDOconn();

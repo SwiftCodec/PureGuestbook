@@ -1,21 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- PAGE settings -->
+    <link rel="icon" href="https://templates.pingendo.com/assets/Pingendo_favicon.ico">
+    <title>Checkout</title>
+    <meta name="description" content="Добро пожаловать, %username%! Здесь оставляют своё мнение те, кого не спрашивали. Присоединяйся!">
+    <meta name="keywords" content="Гостевая книга оставить отзыв">
+    <meta name="author" content="DMaier">
+    <!-- CSS dependencies -->
+    <link rel="stylesheet" href="/template/css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="/template/css/wireframe.css">
+</head>
+<body class="bg-light">
 
 <!-- header -->
 {% include "header.html" %}
 <!-- header/ -->
 
-<!-- messages -->
-{% include "message.html" %}
-<!-- messages/ -->
+{% if demo %}
+<!-- message_block -->
+{% include "demo.html" %}
+<!-- message_block/ -->
+{% endif %}
 
+{% if message %}
+<!-- message_block -->
+{% include "message.html" %}
+<!-- message_block/ -->
+{% endif %}
+
+{% if pagination %}
 <!-- pagination -->
 {% include "pagination.html" %}
 <!-- pagination/ -->
+{% endif %}
 
+{% if message_add %}
 <!-- message_add -->
 {% include "message_add.html" %}
 <!-- message_add/ -->
+{% endif %}
 
 <!-- footer -->
 {% include "footer.html" %}

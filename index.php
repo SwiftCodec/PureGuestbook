@@ -6,43 +6,57 @@ require_once __DIR__ . '/functions/PDOconn.php';
 // https://github.com/auraphp/Aura.SqlQuery
 use Aura\SqlQuery\QueryFactory;
 
-// PDO connection
-$pdo = new PDOconn();
-// init query factory
-$queryFactory = new QueryFactory('Mysql');
+$action = isset($_GET['action']);
+switch ($action) {
+    case 'add':
+        // TODO Ajax comment into DB
+        break;
 
-// template engine
-$loader = new \Twig\Loader\FilesystemLoader(__DIR__ . '/template');
-$twig = new \Twig\Environment($loader);
+    default:
 
-// кеш пока отключим
-/*$twig = new \Twig\Environment($loader, [
-    'cache' => __DIR__ .'/cache',
-]);*/
+        // PDO connection
+        $pdo = new PDOconn();
+        // init query factory
+        $queryFactory = new QueryFactory('Mysql');
 
-$select = $queryFactory->newSelect();
-//$pdo->exec('SET @row_number:=0;');
+        // template engine
+        $loader = new \Twig\Loader\FilesystemLoader(__DIR__ . '/template');
+        $twig = new \Twig\Environment($loader);
 
-$select->cols([
-    'id',
-    'username',
-    'email',
-    'homepage',
-    'text',
-    'tags',
-    'create_date',
-    '@row_number:=@row_number+1 AS row_number'
-])->from('D_GUESTBOOK') ;
+        // cache in debug mode! Stopped.
+        $twig = new \Twig\Environment($loader, [
+            'cache' => __DIR__ .'/cache', 'debug'=>true,
+        ]);
 
-// prepare the statment
-$sth = $pdo->prepare($select->getStatement());
-// bind the values and execute
-$sth->execute($select->getBindValues());
-// get the results back as an associative array
-$result = $sth->fetchAll(PDO::FETCH_ASSOC);
+        /*
+        $select = $queryFactory->newSelect();
+        $select->cols([
+            'id',
+            'username',
+            'email',
+            'homepage',
+            'text',
+            'tags',
+            'create_date',
+            '@row_number:=@row_number+1 AS row_number'
+        ])->from('D_GUESTBOOK') ;
 
-var_dump($sth);
-//var_dump($result);
+        // prepare the statment
+        $sth = $pdo->prepare($select->getStatement());
+        // bind the values and execute
+        $sth->execute($select->getBindValues());
+        // get the results back as an associative array
+        $result = $sth->fetchAll(PDO::FETCH_ASSOC);
+        */
+
+        $stmt = $pdo->query("SELECT id, username, email, homepage, text, tags, create_date, @row_number:=@row_number+1 AS row_num FROM `D_GUESTBOOK`, (SELECT @row_number:=0) AS t ORDER BY create_date DESC limit 100");
+        $messages = $stmt->fetchAll();
+
+        break;
+}
 
 
-echo $twig->render('main.html', ['messages' => $result]);
+echo $twig->render('main.html', [
+    'message' => true,
+    'messages' => $messages
+]);
