@@ -3,15 +3,24 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card text-center" >
-                    <div class="card-header"> Демо-режим </div>
+                    <div class="card-header"> Генерация тестовых данных </div>
                     <div class="card-body">
                         <h5 class="card-title">Создайте записи для просмотра гостевой книги в демо режиме</h5>
-                        <div class="progress-bar progress-bar-striped my-3" role="progressbar" style="width: 50%;">50%</div>
-                        <a href="#" class="btn btn-primary m-2">Создать записи</a>
+                        <div class="py-3" id="iconStatus" style="display: none;">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-md-12 justify-content-center d-flex"><i class="fa fa-refresh fa-spin fa-fw fa-4x"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <form id="frmDemoRows" method="post" class="py-3 form-inline d-flex justify-content-center" novalidate>
+                            <div class="input-group">
+                                <input type="number" id="rows_cnt" class="form-control" placeholder="Количество строк" required="required" value="100" min="10" max="10000">
+                                <div class="input-group-append"><button class="btn btn-primary" type="submit" id="createBtn1">Создать записи</button></div>
+                            </div>
+                        </form>
                     </div>
-                    {% if status %}
-                    <div class="card-footer text-muted"> {{ status }} </div>
-                    {% endif %}
+                    <div class="card-footer text-muted" id="blockStatus"></div>
                 </div>
             </div>
         </div>

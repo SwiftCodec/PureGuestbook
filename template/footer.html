@@ -18,60 +18,16 @@
         </div>
     </div>
 </div>
-<script type="text/javascript">
-    $(document).ready(function(){
-        $("#btnSend").click(function(){
-            $.ajax({url:"ajax.php",
-                data:"w=" + $("#numWidth").val() + "&h=" + $("#numHeight").val() + "&d=" + $("#numDepth").val(),
-                beforeSend:function(){
-                    $("#status").html('<p></p>')
-                    $("#iconLoad").css("display","block")
-                },
-                complete:function(){
-                    $("#iconLoad").css("display","none")
-                },
-                success:function(result){
-                    $("#status").html('<p style="color: green;">' + result + '</p>')
-                },
-                error:function(e){
-                    $("#status").html('<p style="color: red;">' + e + '</p>')
-                }
-            })
-        })
-    });
-</script>
-
-<!--
-<script>
-    // Example starter JavaScript for disabling form submissions if there are invalid fields
-    (function() {
-        'use strict';
-        window.addEventListener('load', function() {
-            // Fetch all the forms we want to apply custom Bootstrap validation styles to
-            var forms = document.getElementsByClassName('needs-validation');
-            // Loop over them and prevent submission
-            var validation = Array.prototype.filter.call(forms, function(form) {
-                form.addEventListener('submit', function(event) {
-                    if (form.checkValidity() === false) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                    }
-                    form.classList.add('was-validated');
-                }, false);
-            });
-        }, false);
-    })();
-</script>
--->
 
 <script type="text/javascript" src="/template/js/jquery-3.3.1.min.js" charset="utf-8"></script>
-<script src="/template/js/bootstrap/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-<script src="/template/js/bootstrap/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<script src="/template/js/bootstrap/bootstrap.min.js"></script>
+<script src="/template/js/main.js"></script>
 <script type="text/javascript" src="/template/js/bootstrap/bootstrap-validate.js" charset="utf-8"></script>
 
 <script>
     // https://bootstrap-validate.js.org/rules.html
-    bootstrapValidate('#username', 'required:Имя пользователя не должно быть пустым.|regex:^[A-z0-9]{1,}$:Только латинские символы и цифры.|min:8:Имя пользователя должно содержать минимум 8 символов!');
-    bootstrapValidate('#email', 'required:E-Mail адрес не должен быть пустым.|email:Введите корректный E-Mail адрес.')
-    bootstrapValidate('#message', 'required:Пожалуйста, введите ваше сообщение.|min:10:Минимум 10 символов!');
+    // TODO JS error TypeError: null has no properties bootstrapValidate('#username'
+    bootstrapValidate('#username', 'required:Имя пользователя не должно быть пустым.|regex:^[A-z0-9]{1,}$:Только латинские символы и цифры.|min:8:Минимум 8 символов!|max:32:Максимум 32 символа!')
+    bootstrapValidate('#email', 'required:E-Mail адрес не должен быть пустым.|email:Введите корректный E-Mail адрес|max:64:Максимум 64 символа!')
+    bootstrapValidate('#message', 'required:Пожалуйста, введите ваше сообщение.|min:10:Минимум 10 символов!|max:2048:Максимум 2048 символов!|regex:^[^<>&]+$:HTML теги запрещены!')
 </script>
